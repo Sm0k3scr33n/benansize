@@ -13,6 +13,7 @@ import (
 	"strconv"
 	"github.com/nfnt/resize"
 	"time"
+	_ "unicode/utf8"
 )
 
 const (
@@ -20,9 +21,9 @@ const (
 	ANSI_COLOR_SPACE 	uint32 	= 6
 	ANSI_FOREGROUND 	string 	= "38"
 	ANSI_RESET 				string 	= "\x1b[0m"
-	CHARACTERS 				string 	= "01"
+	CHARACTERS 				string 	= string("\u2b24")
 	DEFAULT_WIDTH			int 		= 100
-	PROPORTION				float32 = 0.46
+	PROPORTION				float32 = .3
 	RGBA_COLOR_SPACE 	uint32 	= 1 << 16
 )
 
@@ -41,7 +42,7 @@ func toAnsiSpace(val uint32) (int) {
 }
 
 func writeAnsiImage(img image.Image, file *os.File, width int) {
-	m := resize.Resize(uint(width), uint(float32(width) * PROPORTION), img, resize.Lanczos3)
+	m := resize.Resize(uint(width), uint(float32(width) * PROPORTION), img, resize.Bilinear)
 	var current, previous string
 	bounds := m.Bounds()
 	for y := bounds.Min.Y; y < bounds.Max.Y; y++ {
@@ -52,7 +53,7 @@ func writeAnsiImage(img image.Image, file *os.File, width int) {
 				file.WriteString(current)
 			}
 			if (ANSI_RESET != current) {
-				char := string(CHARACTERS[rand.Int()%len(CHARACTERS)])
+				char := CHARACTERS
 				fmt.Print(char)
 				file.WriteString(char)
 			} else {
