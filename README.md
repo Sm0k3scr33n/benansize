@@ -16,4 +16,12 @@ for sh in /etc/profile.d/*.sh; do
  unset sh
 ```
 
- next we make a scipt file which can be called anything and we will place it in the "/etc/profile.d/" directory
+ next we make a scipt file which can be called anything and we will place it in the "/etc/profile.d/" directory:
+
+ ```bash
+ #!/bin/bash
+ list=($(find go/ansize/ -name '*.ansi'))
+ rand=$[ $RANDOM % ${#list[@]} ]
+ cat ${list[$rand]}
+
+ ```
